@@ -1,12 +1,9 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
 import DayWeather from './components/DayWeather/DayWeather'
-import SearchBar from './components/SearchBar/SearchBar'
 import moment from 'moment'
 import axios from 'axios'
 import { Row, Col, Container, Input, Button, InputGroup } from 'reactstrap'
-import PlacesAutocomplete, { geocodeByAddress, getLatLng } from 'react-places-autocomplete';
 import Loader from 'react-loader-spinner'
 import { Map, Marker, Popup, TileLayer } from 'react-leaflet'
 const API_KEY = "f1cc3e6fd7c2d8b919ac7c4665bf0ed2"
@@ -29,18 +26,6 @@ class App extends React.Component {
     }
   }
 
-
-  handleSelect = async (value) => {
-    let results = await geocodeByAddress(value);
-    let Lat = await getLatLng(results[0])
-    console.log("LAT", Lat);
-  }
-
-  setAddress = (address) => {
-    this.setState({
-      address
-    })
-  }
 
   WeatherDays = () => {
     let days = []
@@ -83,18 +68,11 @@ class App extends React.Component {
       .then(response => {
         this.setState({
           weather: response.data
-        }, () => { this.loopOver() })
+        })
       })
       .catch(err => {
         console.log(err)
       })
-  }
-
-  loopOver = () => {
-
-    for (let i = 0; i < 40; i += 8) {
-      console.log('XDDDDD', this.state.weather.list[i]);
-    }
   }
 
   handleChange = (e) => {
@@ -109,11 +87,6 @@ class App extends React.Component {
   componentDidMount = () => {
     navigator.geolocation.getCurrentPosition((pos) => this.setState({ Lat: pos.coords.latitude, Lon: pos.coords.longitude }, () => console.log('Lat', this.state.Lat)), () => console.log('Failed!'))
     console.log("http://api.openweathermap.org/data/2.5/weather?lat=" + this.state.Lat + "&lon=" + this.state.Lon + "&appid=" + API_KEY)
-  }
-
-  handlePlaceChanged = () => {
-    const place = this.autocomplete.getPlace();
-    this.props.onPlaceLoaded(place);
   }
 
   onMove = (event) => {
@@ -179,7 +152,7 @@ class App extends React.Component {
         {this.state.weather ?
           <div>
             <h3 className="text-center my-4 text-white">{this.state.weather.city.name + ", " + (this.state.weather.city ? this.state.weather.city.country : '')}</h3>
-            <Container classname="mb-4">
+            <Container className="mb-4">
               <Row className="seven-cols mb-4">
                 {this.WeatherDays()}
               </Row>
